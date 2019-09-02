@@ -27,8 +27,9 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Version.kotlin}"
-    implementation "androidx.appcompat:appcompat:${Version.appcompat}"
-    testImplementation "junit:junit:${Version.junit}"
-    androidTestImplementation "androidx.test:runner:${Version.testRunner}"
+    implementation "com.google.android.gms:play-services-location:${Version.playServices}"
+    implementation "junit:junit:${Version.junit}"
+    implementation "androidx.test:core:${Version.androidxTest}"
+    androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${Version.espresso}"
 }

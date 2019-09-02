@@ -1,14 +1,15 @@
 object Version {
 
-    val kotlin = "1.3.41"
-    val android = "3.4.2"
-    val minSdk = 16
-    val targetSdk = 29
-    val buildTools = "29.0.1"
-    val compileSdk = 29
+    const val kotlin = "1.3.41"
+    const val android = "3.4.2"
+    const val minSdk = 16
+    const val targetSdk = 29
+    const val buildTools = "29.0.1"
+    const val compileSdk = 29
 
-    val appcompat = "1.0.2"
-    val junit = "4.12"
-    val testRunner = "1.2.0"
-    val espresso = "3.2.0"
+    const val appcompat = "1.0.2"
+    const val playServices = "17.0.0"
+    const val junit = "4.12"
+    const val androidxTest = "1.2.0"
+    const val espresso = "3.2.0"
 }
