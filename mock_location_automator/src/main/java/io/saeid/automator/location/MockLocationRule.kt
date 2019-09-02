@@ -1,12 +1,14 @@
 package io.saeid.automator.location
 
 import android.content.Context
+import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.TestRule
 import org.junit.runner.Description
 import org.junit.runners.model.Statement
 
-class MockLocationRule() : TestRule {
+class MockLocationRule : TestRule {
 
     private val context: Context by lazy { ApplicationProvider.getApplicationContext() }
 
@@ -23,10 +25,19 @@ class MockLocationRule() : TestRule {
     }
 
     private fun grantMockLocationAccess(packageName: String) {
-        TODO("Not implemented")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            with(InstrumentationRegistry.getInstrumentation().uiAutomation) {
+                executeShellCommand("adb shell pm grant $packageName android.permission.ACCESS_MOCK_LOCATION")
+                executeShellCommand("appops set $packageName android:mock_location allow")
+            }
+        }
     }
 
     private fun denyMockLocationAccess(packageName: String) {
-        TODO("Not implemented")
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            with(InstrumentationRegistry.getInstrumentation().uiAutomation) {
+                executeShellCommand("appops set $packageName android:mock_location deny")
+            }
+        }
     }
 }
