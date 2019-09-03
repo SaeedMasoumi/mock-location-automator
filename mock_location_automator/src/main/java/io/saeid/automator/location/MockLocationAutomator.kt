@@ -19,7 +19,8 @@ internal object MockLocationAutomator {
 
     @Synchronized
     fun mock(location: Location, preserve: Boolean) {
-
+        if (!isStarted) throw IllegalStateException("start() method must be called before mocking any location.")
+        mockProviders.forEach { it.mock(location) }
     }
 
     @Synchronized

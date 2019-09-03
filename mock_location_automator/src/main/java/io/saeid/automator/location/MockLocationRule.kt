@@ -3,6 +3,7 @@ package io.saeid.automator.location
 import android.content.Context
 import android.os.Build
 import androidx.test.core.app.ApplicationProvider
+import androidx.test.espresso.IdlingRegistry
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -10,18 +11,29 @@ import org.junit.runners.model.Statement
 
 class MockLocationRule : TestRule {
 
-    private val context: Context by lazy { ApplicationProvider.getApplicationContext() }
-
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
-                grantMockLocationAccess(context.packageName)
-                MockLocationAutomator.start(context)
+                val idlingResource = MockLocationIdlingResource()
+                val context = ApplicationProvider.getApplicationContext<Context>()
+
+                before(context, idlingResource)
                 base.evaluate()
-                MockLocationAutomator.stop()
-                denyMockLocationAccess(context.packageName)
+                after(context, idlingResource)
             }
         }
+    }
+
+    private fun before(context: Context, idlingResource: MockLocationIdlingResource) {
+        MockLocationAutomator.start(context)
+        grantMockLocationAccess(context.packageName)
+        IdlingRegistry.getInstance().register(idlingResource)
+    }
+
+    private fun after(context: Context, idlingResource: MockLocationIdlingResource) {
+        IdlingRegistry.getInstance().unregister(idlingResource)
+        MockLocationAutomator.stop()
+        denyMockLocationAccess(context.packageName)
     }
 
     private fun grantMockLocationAccess(packageName: String) {

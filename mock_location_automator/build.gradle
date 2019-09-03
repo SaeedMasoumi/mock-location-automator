@@ -30,6 +30,6 @@ dependencies {
     implementation "com.google.android.gms:play-services-location:${Version.playServices}"
     implementation "junit:junit:${Version.junit}"
     implementation "androidx.test:core:${Version.androidxTest}"
+    implementation "androidx.test.espresso:espresso-core:${Version.espresso}"
     androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
-    androidTestImplementation "androidx.test.espresso:espresso-core:${Version.espresso}"
 }
