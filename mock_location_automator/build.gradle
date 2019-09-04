@@ -32,4 +32,6 @@ dependencies {
     implementation "androidx.test:core:${Version.androidxTest}"
     implementation "androidx.test.espresso:espresso-core:${Version.espresso}"
     androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
+    androidTestImplementation "androidx.test:rules:${Version.androidxTest}"
+    androidTestImplementation "androidx.test.ext:junit:${Version.androidxTestExt}"
 }

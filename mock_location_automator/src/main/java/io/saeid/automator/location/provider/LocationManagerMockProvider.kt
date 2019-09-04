@@ -3,11 +3,13 @@ package io.saeid.automator.location.provider
 import android.content.Context
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 
 internal class LocationManagerMockProvider : MockProvider {
 
     private lateinit var locationManager: LocationManager
-    private val supportedProviders = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
+    private val supportedProviders =
+        listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
     private val defaultProviderAccuracy = 5 // meter
 
     override fun start(context: Context) {
@@ -40,49 +42,54 @@ internal class LocationManagerMockProvider : MockProvider {
     }
 }
 
-private fun LocationManager.setTestProviderLocationSafe(provider: String, location: Location) {
-    try {
+private fun LocationManager.setTestProviderLocationSafe(provider: String, location: Location) =
+    safeCall {
         setTestProviderLocation(provider, location)
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
-}
 
-private fun LocationManager.setTestProviderEnabledSafe(provider: String, enabled: Boolean) {
-    try {
+private fun LocationManager.setTestProviderEnabledSafe(provider: String, enabled: Boolean) =
+    safeCall {
         setTestProviderEnabled(provider, enabled)
-    } catch (e: Exception) {
-        e.printStackTrace()
     }
-}
 
 private fun LocationManager.addTestProviderSafe(
-    name: String, requiresNetwork: Boolean = false, requiresSatellite: Boolean = false,
-    requiresCell: Boolean = false, hasMonetaryCost: Boolean = false, supportsAltitude: Boolean = false,
-    supportsSpeed: Boolean = false, supportsBearing: Boolean = false, powerRequirement: Int = 0, accuracy: Int = 0
-) {
-    try {
-        addTestProvider(
-            name,
-            requiresNetwork,
-            requiresSatellite,
-            requiresCell,
-            hasMonetaryCost,
-            supportsAltitude,
-            supportsSpeed,
-            supportsBearing,
-            powerRequirement,
-            accuracy
-        )
-    } catch (e: Exception) {
-        e.printStackTrace()
-    }
+    name: String,
+    requiresNetwork: Boolean = false,
+    requiresSatellite: Boolean = false,
+    requiresCell: Boolean = false,
+    hasMonetaryCost: Boolean = false,
+    supportsAltitude: Boolean = false,
+    supportsSpeed: Boolean = false,
+    supportsBearing: Boolean = false,
+    powerRequirement: Int = 0,
+    accuracy: Int = 0
+) = safeCall {
+    addTestProvider(
+        name,
+        requiresNetwork,
+        requiresSatellite,
+        requiresCell,
+        hasMonetaryCost,
+        supportsAltitude,
+        supportsSpeed,
+        supportsBearing,
+        powerRequirement,
+        accuracy
+    )
 }
 
-private fun LocationManager.removeTestProviderSafe(provider: String) {
-    try {
-        removeTestProvider(provider)
-    } catch (e: Exception) {
-        e.printStackTrace()
+private fun LocationManager.removeTestProviderSafe(provider: String) = safeCall {
+    removeTestProvider(provider)
+}
+
+private inline fun <T> safeCall(block: () -> T) {
+    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+        try {
+            block()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    } else {
+        block()
     }
 }

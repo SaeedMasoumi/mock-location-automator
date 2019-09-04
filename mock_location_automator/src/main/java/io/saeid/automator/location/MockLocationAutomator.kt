@@ -5,7 +5,9 @@ import android.location.Location
 import io.saeid.automator.location.provider.FusedLocationMockProvider
 import io.saeid.automator.location.provider.LocationManagerMockProvider
 
-internal object MockLocationAutomator {
+object MockLocationAutomator {
+
+    private const val waitingTime = 200L // millis
 
     private val mockProviders = listOf(LocationManagerMockProvider(), FusedLocationMockProvider())
     private var isStarted = false
@@ -21,6 +23,7 @@ internal object MockLocationAutomator {
     fun mock(location: Location, preserve: Boolean) {
         if (!isStarted) throw IllegalStateException("start() method must be called before mocking any location.")
         mockProviders.forEach { it.mock(location) }
+        Thread.sleep(waitingTime)
     }
 
     @Synchronized

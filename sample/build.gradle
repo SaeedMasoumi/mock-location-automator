@@ -29,7 +29,10 @@ dependencies {
     implementation "androidx.appcompat:appcompat:${Version.appcompat}"
     implementation 'androidx.core:core-ktx:1.0.2'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation project(':mock_location_automator')
     testImplementation "junit:junit:${Version.junit}"
     androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
+    androidTestImplementation "androidx.test:rules:${Version.androidxTest}"
+    androidTestImplementation "androidx.test.ext:junit:${Version.androidxTestExt}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${Version.espresso}"
 }

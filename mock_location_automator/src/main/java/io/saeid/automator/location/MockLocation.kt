@@ -44,6 +44,7 @@ internal fun createLocation(
         it.latitude = latitude
         it.longitude = longitude
         it.accuracy = accuracy
+        it.time = System.currentTimeMillis()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             it.bearingAccuracyDegrees = bearingAccuracyDegrees
         }
