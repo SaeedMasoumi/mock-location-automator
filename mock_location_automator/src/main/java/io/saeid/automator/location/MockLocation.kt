@@ -7,6 +7,8 @@ import android.location.LocationManager
 import android.os.Build
 import android.os.SystemClock
 
+private const val defaultIntervalMillis = 2_000L
+
 fun mockLocation(
     latitude: Double,
     longitude: Double,
@@ -14,7 +16,8 @@ fun mockLocation(
     bearingAccuracyDegrees: Float = 0.1f,
     verticalAccuracyMeters: Float = 0.1f,
     speedAccuracyMetersPerSecond: Float = 0.01f,
-    preserve: Boolean = true
+    preserve: Boolean = true,
+    preserveInterval: Long = defaultIntervalMillis
 ) {
     mockLocation(
         createLocation(
@@ -24,12 +27,18 @@ fun mockLocation(
             bearingAccuracyDegrees,
             verticalAccuracyMeters,
             speedAccuracyMetersPerSecond
-        ), preserve
+        ),
+        preserve,
+        preserveInterval
     )
 }
 
-fun mockLocation(location: Location, preserve: Boolean = true) {
-    MockLocationAutomator.mock(location, preserve)
+fun mockLocation(
+    location: Location,
+    preserve: Boolean = true,
+    preserveInterval: Long = defaultIntervalMillis
+) {
+    MockLocationAutomator.mock(location, preserve, preserveInterval)
 }
 
 internal fun createLocation(

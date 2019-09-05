@@ -2,7 +2,6 @@ package io.saeid.automator.location
 
 import android.content.Context
 import android.os.Build
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -32,7 +31,8 @@ class MockLocationRule(
     override fun apply(base: Statement, description: Description): Statement {
         return object : Statement() {
             override fun evaluate() {
-                val context = ApplicationProvider.getApplicationContext<Context>()
+                // use the test apk context
+                val context = InstrumentationRegistry.getInstrumentation().context
 
                 before(context)
                 try {
@@ -64,7 +64,7 @@ class MockLocationRule(
     }
 
     private fun revokeNeededPermissions(packageName: String) {
-        // pm revoke will cause the instrumentation test to crash
+        // "pm revoke" will cause the instrumentation test to crash
     }
 
     private fun grantMockLocationAccess(packageName: String) {

@@ -7,6 +7,7 @@ object Version {
     const val buildTools = "29.0.1"
     const val compileSdk = 29
 
+    const val coroutine = "1.1.1"
     const val appcompat = "1.0.2"
     const val playServices = "17.0.0"
     const val junit = "4.12"

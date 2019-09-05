@@ -12,16 +12,10 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
-import java.util.concurrent.CountDownLatch
 
-/**
- * Instrumented test, which will execute on an Android device.
- *
- * See [testing documentation](http://d.android.com/tools/testing).
- */
 @RunWith(AndroidJUnit4::class)
 @LargeTest
-class LocationManagerMockTest {
+class MockLocationTest {
 
     @get:Rule
     val mockLocationRule = MockLocationRule()
@@ -50,5 +44,27 @@ class LocationManagerMockTest {
             assertEquals(mockLatitude, it.latitude, delta)
             assertEquals(mockLongitude, it.longitude, delta)
         }
+    }
+
+    @Test
+    fun verify_mocking_without_preserving_location() {
+        mockLocation(mockLatitude, mockLongitude, preserve = false)
+        var updateCounter = 0
+        client.requestLocationUpdates(
+            LocationRequest().setFastestInterval(1000).setInterval(1000 * 60 * 10).setPriority(
+                LocationRequest.PRIORITY_HIGH_ACCURACY
+            ),
+            object : LocationCallback() {
+                override fun onLocationResult(p0: LocationResult?) {
+                    val it = p0!!.lastLocation!!
+                    assertEquals(mockLatitude, it.latitude, delta)
+                    assertEquals(mockLongitude, it.longitude, delta)
+                    updateCounter++
+                }
+            }
+            , Looper.getMainLooper()
+        )
+        Thread.sleep(5_000)
+        assertEquals(1, updateCounter)
     }
 }
