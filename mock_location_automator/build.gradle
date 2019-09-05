@@ -43,39 +43,39 @@ dependencies {
 jacoco {
     toolVersion = "0.8.4"
 }
-//
-//project.afterEvaluate {
-//    def testTaskName = "testDebugUnitTest"
-//    def uiTestCoverageTaskName = "createDebugCoverageReport"
-//
-//    task jacocoTestReport(type: JacocoReport, dependsOn: ["$testTaskName", "$uiTestCoverageTaskName"]) {
-//        group = "Reporting"
-//        description = "Generate Jacoco coverage reports for the debug build."
-//
-//        reports {
-//            html.enabled = true
-//            xml.enabled = true
-//        }
-//
-//        def excludes = [
-//                '**/R.class',
-//                '**/R$*.class',
-//                '**/BuildConfig.*',
-//                '**/Manifest*.*',
-//                '**/*Test*.*',
-//                'android/**/*.*'
-//        ]
-//        def javaClasses = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: excludes)
-//        def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: excludes)
-//        classDirectories = files([javaClasses, kotlinClasses])
-//
-//        sourceDirectories = files([
-//                "$project.projectDir/src/main/java",
-//        ])
-//
-//        executionData = files([
-//                "${project.buildDir}/jacoco/${testTaskName}.exec",
-//                "outputs/code-coverage/connected/*coverage.ec"
-//        ])
-//    }
-//}
+
+project.afterEvaluate {
+    def testTaskName = "testDebugUnitTest"
+    def uiTestCoverageTaskName = "createDebugCoverageReport"
+
+    task jacocoTestReport(type: JacocoReport, dependsOn: ["$testTaskName", "$uiTestCoverageTaskName"]) {
+        group = "Reporting"
+        description = "Generate Jacoco coverage reports for the debug build."
+
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
+
+        def excludes = [
+                '**/R.class',
+                '**/R$*.class',
+                '**/BuildConfig.*',
+                '**/Manifest*.*',
+                '**/*Test*.*',
+                'android/**/*.*'
+        ]
+        def javaClasses = fileTree(dir: "${buildDir}/intermediates/javac/debug/classes", excludes: excludes)
+        def kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/debug", excludes: excludes)
+        classDirectories = files([javaClasses, kotlinClasses])
+
+        sourceDirectories = files([
+                "$project.projectDir/src/main/java",
+        ])
+
+        executionData = files([
+                "${project.buildDir}/jacoco/${testTaskName}.exec",
+                "outputs/code-coverage/connected/*coverage.ec"
+        ])
+    }
+}
