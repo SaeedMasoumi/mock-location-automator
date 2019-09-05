@@ -15,7 +15,7 @@ class MockLocationRule(
 ) : TestRule {
 
     private val permissions: List<String>
-
+    
     init {
         permissions = ArrayList<String>().apply {
             add("android.permission.ACCESS_MOCK_LOCATION")
@@ -77,14 +77,13 @@ class MockLocationRule(
 
     private fun executeCommand(command: String, sync: Boolean = false) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            with(InstrumentationRegistry.getInstrumentation().uiAutomation) {
-                executeShellCommand(command).use { pfd ->
+            InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand(command)
+                .use { pfd ->
                     if (sync) {
                         // Synchronize with execution of command by reading the whole stream
                         InputStreamReader(FileInputStream(pfd.fileDescriptor)).readLines()
                     }
                 }
-            }
         }
     }
 }

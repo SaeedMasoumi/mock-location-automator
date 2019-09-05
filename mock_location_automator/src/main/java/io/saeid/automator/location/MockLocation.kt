@@ -20,7 +20,7 @@ fun mockLocation(
     preserveInterval: Long = defaultIntervalMillis
 ) {
     mockLocation(
-        createLocation(
+        createMockLocation(
             latitude,
             longitude,
             accuracy,
@@ -41,7 +41,11 @@ fun mockLocation(
     MockLocationAutomator.mock(location, preserve, preserveInterval)
 }
 
-internal fun createLocation(
+fun mockLocations(locations: List<DelayedLocation>) {
+    MockLocationAutomator.mock(locations)
+}
+
+internal fun createMockLocation(
     latitude: Double,
     longitude: Double,
     accuracy: Float,

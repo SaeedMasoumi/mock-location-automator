@@ -47,6 +47,13 @@ object MockLocationAutomator : CoroutineScope {
     }
 
     @Synchronized
+    fun mock(locations: List<DelayedLocation>) {
+        if (!isStarted) throw IllegalStateException("start() method must be called before mocking any location.")
+        registerBatchUpdates(locations)
+        Thread.sleep(waitingTime)
+    }
+
+    @Synchronized
     fun stop() {
         cancelLocationUpdates()
         mockProviders.forEach { it.stop() }
@@ -57,15 +64,22 @@ object MockLocationAutomator : CoroutineScope {
         mockProviders.forEach { it.mock(location) }
     }
 
-    private fun
-            registerFixedUpdates(location: Location, interval: Long) {
-        launch {
-            cancelLocationUpdates()
-            updateChannel = ticker(delayMillis = interval, initialDelayMillis = 0)
-            updateJob = launch {
-                for (event in updateChannel!!) {
-                    dispatchToProviders(location)
-                }
+    private fun registerFixedUpdates(location: Location, interval: Long) {
+        cancelLocationUpdates()
+        updateChannel = ticker(delayMillis = interval, initialDelayMillis = 0)
+        updateJob = launch {
+            for (event in updateChannel!!) {
+                dispatchToProviders(location)
+            }
+        }
+    }
+
+    private fun registerBatchUpdates(locations: List<DelayedLocation>) {
+        cancelLocationUpdates()
+        updateJob = launch {
+            locations.forEach {
+                delay(it.delay)
+                dispatchToProviders(it.location)
             }
         }
     }

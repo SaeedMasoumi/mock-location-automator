@@ -2,11 +2,11 @@ package io.saeid.automator.location
 
 import android.content.Context
 import android.location.LocationManager
-import android.os.Looper
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
-import com.google.android.gms.location.*
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Rule
@@ -61,11 +61,30 @@ class MockLocationTest {
     }
 
     @Test
-    fun verify_location_updates_when_preserving() {
+    fun verify_location_updates_when_preserving_is_on() {
         val stubProvider = StubMockProvider()
         MockLocationAutomator.setProviders(stubProvider)
         mockLocation(mockLatitude, mockLongitude, preserve = true, preserveInterval = 1000)
         Thread.sleep(3500)
         assertEquals(4, stubProvider.mockCounts)
+    }
+
+    @Test
+    fun verify_batch_location_updates() {
+        val stubProvider = StubMockProvider()
+        MockLocationAutomator.setProviders(stubProvider)
+        val locations = ArrayList<DelayedLocation>()
+        repeat(3) {
+            locations.add(
+                DelayedLocation(
+                    latitude = mockLatitude,
+                    longitude = mockLongitude,
+                    delay = 500L * (it + 1)
+                )
+            )
+        }
+        mockLocations(locations)
+        Thread.sleep(3500)
+        assertEquals(3, stubProvider.mockCounts)
     }
 }
