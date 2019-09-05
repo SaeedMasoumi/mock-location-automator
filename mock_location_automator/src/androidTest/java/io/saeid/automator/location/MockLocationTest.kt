@@ -34,8 +34,10 @@ class MockLocationTest {
 
     @Test
     fun verify_getLastKnownLocation_return_mock_location() {
+        val providers = listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER)
         mockLocation(mockLatitude, mockLongitude)
-        listOf(LocationManager.GPS_PROVIDER, LocationManager.NETWORK_PROVIDER).forEach {
+
+        providers.forEach {
             val lastKnowLocation = context.locationManager().getLastKnownLocation(it)!!
             assertEquals(mockLatitude, lastKnowLocation.latitude, delta)
             assertEquals(mockLongitude, lastKnowLocation.longitude, delta)
@@ -44,27 +46,26 @@ class MockLocationTest {
             assertEquals(mockLatitude, it.latitude, delta)
             assertEquals(mockLongitude, it.longitude, delta)
         }
+        // now mock a new location without preserving it
+        mockLocation(mockLatitude + 1, mockLongitude + 1, preserve = false)
+
+        providers.forEach {
+            val lastKnowLocation = context.locationManager().getLastKnownLocation(it)!!
+            assertEquals(mockLatitude + 1, lastKnowLocation.latitude, delta)
+            assertEquals(mockLongitude + 1, lastKnowLocation.longitude, delta)
+        }
+        client.getLastLocationSync().let {
+            assertEquals(mockLatitude + 1, it.latitude, delta)
+            assertEquals(mockLongitude + 1, it.longitude, delta)
+        }
     }
 
     @Test
-    fun verify_mocking_without_preserving_location() {
-        mockLocation(mockLatitude, mockLongitude, preserve = false)
-        var updateCounter = 0
-        client.requestLocationUpdates(
-            LocationRequest().setFastestInterval(1000).setInterval(1000 * 60 * 10).setPriority(
-                LocationRequest.PRIORITY_HIGH_ACCURACY
-            ),
-            object : LocationCallback() {
-                override fun onLocationResult(p0: LocationResult?) {
-                    val it = p0!!.lastLocation!!
-                    assertEquals(mockLatitude, it.latitude, delta)
-                    assertEquals(mockLongitude, it.longitude, delta)
-                    updateCounter++
-                }
-            }
-            , Looper.getMainLooper()
-        )
-        Thread.sleep(5_000)
-        assertEquals(1, updateCounter)
+    fun verify_location_updates_when_preserving() {
+        val stubProvider = StubMockProvider()
+        MockLocationAutomator.setProviders(stubProvider)
+        mockLocation(mockLatitude, mockLongitude, preserve = true, preserveInterval = 1000)
+        Thread.sleep(3500)
+        assertEquals(4, stubProvider.mockCounts)
     }
 }
