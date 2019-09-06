@@ -43,8 +43,8 @@ dependencies {
 
 publish {
     userOrg = ''
-    groupId = group
-    artifactId = name
+    groupId = 'io.saeid.automator'
+    artifactId = 'mock-location-automator'
     publishVersion = Version.artifact
     desc = 'Mock location during Android instrumentation tests.'
     website = 'https://github.com/SaeedMasoumi/mock-location-automator'
