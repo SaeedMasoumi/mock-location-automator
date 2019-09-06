@@ -1,6 +1,7 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'jacoco'
+apply plugin: 'com.novoda.bintray-release'
 
 android {
     compileSdkVersion Version.compileSdk
@@ -26,7 +27,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    }
+}
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Version.kotlin}"
@@ -38,6 +39,15 @@ dependencies {
     androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
     androidTestImplementation "androidx.test:rules:${Version.androidxTest}"
     androidTestImplementation "androidx.test.ext:junit:${Version.androidxTestExt}"
+}
+
+publish {
+    userOrg = ''
+    groupId = group
+    artifactId = name
+    publishVersion = Version.artifact
+    desc = 'Mock location during Android instrumentation tests.'
+    website = 'https://github.com/SaeedMasoumi/mock-location-automator'
 }
 
 jacoco {

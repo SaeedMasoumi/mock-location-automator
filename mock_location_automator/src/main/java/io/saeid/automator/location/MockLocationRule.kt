@@ -59,7 +59,6 @@ class MockLocationRule(
     private fun grantNeededPermissions(packageName: String) {
         permissions.forEach {
             executeCommand("pm grant $packageName $it", sync = true)
-
         }
     }
 
