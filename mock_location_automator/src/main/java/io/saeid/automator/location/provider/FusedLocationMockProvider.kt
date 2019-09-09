@@ -3,6 +3,7 @@ package io.saeid.automator.location.provider
 import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
+import android.location.LocationManager
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 
@@ -16,7 +17,11 @@ internal class FusedLocationMockProvider : MockProvider {
     }
 
     override fun mock(location: Location) {
-        client.setMockLocation(location)
+        val locationFromNetwork = Location(location)
+        locationFromNetwork.provider = LocationManager.NETWORK_PROVIDER
+
+        client.setMockLocation(location) // gps location
+        client.setMockLocation(locationFromNetwork)
     }
 
     override fun stop() {

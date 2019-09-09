@@ -2,6 +2,7 @@ package io.saeid.automator.location
 
 import android.content.Context
 import android.os.Build
+import androidx.test.core.app.ApplicationProvider
 import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.rules.TestRule
 import org.junit.runner.Description
@@ -32,7 +33,7 @@ class MockLocationRule(
         return object : Statement() {
             override fun evaluate() {
                 // use the test apk context
-                val context = InstrumentationRegistry.getInstrumentation().context
+                val context = ApplicationProvider.getApplicationContext<Context>()
 
                 before(context)
                 try {

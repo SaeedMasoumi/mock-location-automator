@@ -1,6 +1,7 @@
 package io.saeid.automator.location.provider
 
 import android.content.Context
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationManager
 import android.os.Build
@@ -28,9 +29,9 @@ internal class LocationManagerMockProvider : MockProvider {
 
     override fun mock(location: Location) {
         supportedProviders.forEach {
-            val mockLocation = Location(location)
-            mockLocation.provider = it
-            locationManager.setTestProviderLocationSafe(it, mockLocation)
+            val providerLocation = Location(location)
+            providerLocation.provider = it
+            locationManager.setTestProviderLocationSafe(it, providerLocation)
         }
     }
 
@@ -61,8 +62,8 @@ private fun LocationManager.addTestProviderSafe(
     supportsAltitude: Boolean = false,
     supportsSpeed: Boolean = false,
     supportsBearing: Boolean = false,
-    powerRequirement: Int = 0,
-    accuracy: Int = 0
+    powerRequirement: Int = Criteria.NO_REQUIREMENT,
+    accuracy: Int = Criteria.ACCURACY_HIGH
 ) = safeCall {
     addTestProvider(
         name,

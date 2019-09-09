@@ -2,7 +2,7 @@ package io.saeid.automator.location
 
 import android.location.Location
 
-class DelayedLocation(val location: Location, val delay: Long) {
+data class DelayedLocation(val location: Location, val delay: Long) {
 
     constructor(
         latitude: Double,

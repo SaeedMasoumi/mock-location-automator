@@ -2,6 +2,8 @@ package io.saeid.automator.location
 
 import android.content.Context
 import android.location.Location
+import android.os.Build
+import android.os.SystemClock
 import androidx.annotation.VisibleForTesting
 import io.saeid.automator.location.provider.FusedLocationMockProvider
 import io.saeid.automator.location.provider.LocationManagerMockProvider
@@ -20,12 +22,13 @@ object MockLocationAutomator : CoroutineScope {
 
     private var mockProviders = listOf(LocationManagerMockProvider(), FusedLocationMockProvider())
     private var isStarted = false
-    private var updateChannel: ReceiveChannel<Unit>? = null
-    private var updateJob: Job? = null
+    private var singleUpdateChannel: ReceiveChannel<Unit>? = null
+    private var singleUpdateJob: Job? = null
+    private var sequentialUpdateJob: Job? = null
 
     @VisibleForTesting
-    internal fun setProviders(vararg providers: MockProvider) {
-        mockProviders = listOf(*providers)
+    internal fun addProvider(vararg providers: MockProvider) {
+        mockProviders = listOf(*providers) + mockProviders
     }
 
     @Synchronized
@@ -38,8 +41,9 @@ object MockLocationAutomator : CoroutineScope {
     @Synchronized
     fun mock(location: Location, preserve: Boolean, preserveInterval: Long) {
         if (!isStarted) throw IllegalStateException("start() method must be called before mocking any location.")
+        cancelAllJobs()
         if (preserve) {
-            registerFixedUpdates(location, preserveInterval)
+            registerSingleUpdate(location, preserveInterval)
         } else {
             dispatchToProviders(location)
         }
@@ -49,43 +53,60 @@ object MockLocationAutomator : CoroutineScope {
     @Synchronized
     fun mock(locations: List<DelayedLocation>) {
         if (!isStarted) throw IllegalStateException("start() method must be called before mocking any location.")
-        registerBatchUpdates(locations)
+        cancelAllJobs()
+        registerSequentialUpdates(locations)
         Thread.sleep(waitingTime)
     }
 
     @Synchronized
     fun stop() {
-        cancelLocationUpdates()
+        cancelAllJobs()
         mockProviders.forEach { it.stop() }
         isStarted = false
     }
 
     private fun dispatchToProviders(location: Location) {
-        mockProviders.forEach { it.mock(location) }
+        // make sure that we mock a location for current time,
+        // otherwise `fusedClient.requestLocationUpdates()` will not work
+        val updatedLocation = Location(location).apply {
+            time = System.currentTimeMillis()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
+            }
+        }
+        mockProviders.forEach { it.mock(updatedLocation) }
     }
 
-    private fun registerFixedUpdates(location: Location, interval: Long) {
-        cancelLocationUpdates()
-        updateChannel = ticker(delayMillis = interval, initialDelayMillis = 0)
-        updateJob = launch {
-            for (event in updateChannel!!) {
+    private fun registerSingleUpdate(location: Location, interval: Long) {
+        singleUpdateChannel = ticker(delayMillis = interval, initialDelayMillis = 0)
+        singleUpdateJob = launch {
+            for (event in singleUpdateChannel!!) {
                 dispatchToProviders(location)
             }
         }
     }
 
-    private fun registerBatchUpdates(locations: List<DelayedLocation>) {
-        cancelLocationUpdates()
-        updateJob = launch {
+    private fun registerSequentialUpdates(locations: List<DelayedLocation>) {
+        sequentialUpdateJob = launch {
             locations.forEach {
                 delay(it.delay)
-                dispatchToProviders(it.location)
+                cancelSingleUpdateJob()
+                registerSingleUpdate(it.location, 1_000L)
             }
         }
     }
 
-    private fun cancelLocationUpdates() {
-        updateChannel?.cancel()
-        updateJob?.cancel()
+    private fun cancelSingleUpdateJob() {
+        singleUpdateChannel?.cancel()
+        singleUpdateJob?.cancel()
+    }
+
+    private fun cancelSequentialUpdateJob() {
+        sequentialUpdateJob?.cancel()
+    }
+
+    private fun cancelAllJobs() {
+        cancelSingleUpdateJob()
+        cancelSequentialUpdateJob()
     }
 }
