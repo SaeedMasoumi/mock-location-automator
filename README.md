@@ -6,6 +6,9 @@ Enabling mock locations for [LocationManager](https://developer.android.com/refe
 
 It providers a Junit-rule to grant needed permissions by executing adb commands and setting mock mode enabled for different location providers.
 
+![Demo](video.gif)
+
+
 ## Download
 
 ```groovy
