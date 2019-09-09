@@ -13,7 +13,7 @@ It providers a Junit-rule to grant needed permissions by executing adb commands 
 
 ```groovy
 dependencies {
-    androidTestImplementation 'io.saeid.automator:mock-location-automator:0.5.0'
+    androidTestImplementation 'io.saeid.automator:mock-location-automator:1.0.0'
 }
 ```
 ## Example
