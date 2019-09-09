@@ -32,9 +32,11 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:${Version.kotlin}"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:${Version.coroutine}"
     implementation "androidx.appcompat:appcompat:${Version.appcompat}"
-    implementation 'androidx.core:core-ktx:1.0.2'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation "androidx.core:core-ktx:${Version.appcompat}"
     implementation project(':mock_location_automator')
+    implementation "com.google.android.gms:play-services-maps:${Version.playServices}"
+    implementation "com.google.android.gms:play-services-location:${Version.playServices}"
+
     testImplementation "junit:junit:${Version.junit}"
     androidTestImplementation "androidx.test:runner:${Version.androidxTest}"
     androidTestImplementation "androidx.test:rules:${Version.androidxTest}"

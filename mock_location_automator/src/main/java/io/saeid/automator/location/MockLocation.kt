@@ -45,6 +45,10 @@ fun mockLocations(locations: List<DelayedLocation>) {
     MockLocationAutomator.mock(locations)
 }
 
+fun mockLocations(vararg locations: DelayedLocation) {
+    MockLocationAutomator.mock(listOf(*locations))
+}
+
 internal fun createMockLocation(
     latitude: Double,
     longitude: Double,
