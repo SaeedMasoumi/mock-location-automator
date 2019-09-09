@@ -2,6 +2,6 @@
 
 set -e
 
-./gradlew clean build bintrayUpload -PbintrayUser=$BINTRAY_USERNAME -PbintrayKey=$BINTRAY_KEY -PdryRun=false
-./gradlew jacocoTestReport
+./gradlew clean build jacocoTestReport
+./gradlew bintrayUpload -PbintrayUser=$BINTRAY_USERNAME -PbintrayKey=$BINTRAY_KEY -PdryRun=false
 bash <(curl -s https://codecov.io/bash)

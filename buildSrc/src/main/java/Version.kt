@@ -1,6 +1,6 @@
 object Version {
 
-    const val artifact = "0.5.0"
+    const val artifact = "1.0.0"
 
     const val kotlin = "1.3.41"
     const val android = "3.4.2"

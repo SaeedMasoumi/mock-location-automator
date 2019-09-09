@@ -71,7 +71,7 @@ class MockLocationTest {
     }
 
     @Test
-    fun verify_batch_location_updates() {
+    fun verify_sequential_location_updates() {
         val stubProvider = StubMockProvider()
         MockLocationAutomator.addProvider(stubProvider)
         val locations = ArrayList<DelayedLocation>()
@@ -86,7 +86,7 @@ class MockLocationTest {
         }
         mockLocations(locations)
         Thread.sleep(3500)
-        assertEquals(3, stubProvider.mockCounts)
+        assertEquals(5, stubProvider.mockCounts)
     }
 
     @Test
